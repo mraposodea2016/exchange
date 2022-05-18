@@ -11,3 +11,9 @@ build:
 
 run:
 	docker run -p ${HOST_PORT}:${CONTAINER_PORT} -d tx_pool:${TX_POOL_VERSION}
+
+compose:
+	docker-compose up -d
+
+down:
+	docker-compose down --volumes
