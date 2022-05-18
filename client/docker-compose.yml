@@ -1,0 +1,8 @@
+services:
+  client:
+    build: .
+    command: npm run android
+  metro:
+    build: .
+    ports:
+      - "3000:3000"
