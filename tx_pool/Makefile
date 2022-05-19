@@ -1,6 +1,6 @@
 RUBY_VERSION = 3.1.2
 TX_POOL_VERSION = v1.0
-HOST_PORT = 49159
+HOST_PORT = 3002
 CONTAINER_PORT = 3000
 
 lock:
@@ -12,7 +12,7 @@ build:
 run:
 	docker run -p ${HOST_PORT}:${CONTAINER_PORT} -d tx_pool:${TX_POOL_VERSION}
 
-compose:
+up:
 	docker-compose up -d
 
 down:
