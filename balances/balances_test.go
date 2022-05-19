@@ -1,4 +1,4 @@
-package balances
+package main
 
 import "testing"
 
