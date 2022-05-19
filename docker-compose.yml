@@ -14,7 +14,6 @@ services:
       - "3001:3000"
   tx_pool:
     build: ./tx_pool
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000"
     volumes:
       - ./tx_pool:/exchange/tx_pool
     ports:

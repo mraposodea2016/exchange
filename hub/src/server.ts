@@ -66,11 +66,13 @@ const staticDir = path.join(__dirname, 'public');
 app.use(express.static(staticDir));
 
 // Serve index.html file
-app.get('*', (_: Request, res: Response) => {
-    res.sendFile('index.html', {root: viewsDir});
+// app.get('*', (_: Request, res: Response) => {
+//     res.sendFile('index.html', {root: viewsDir});
+// });
+
+app.get('/', (_: Request, res: Response) => {
+    res.status(200).send("Hub response");
 });
-
-
 
 // Export here and start in a diff file (for testing).
 export default app;
