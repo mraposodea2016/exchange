@@ -8,6 +8,8 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import TxPool from "./TxPool";
 import Hub from "./Hub";
 import Balances from "./Balances";
+import Treasury from "./Treasury";
+import Assets from "./Assets";
 
 const App = () => {
     const isDarkMode = useColorScheme() === 'dark';
@@ -34,6 +36,12 @@ const App = () => {
                         </Section>
                         <Section title="Hub">
                             <Hub/>
+                        </Section>
+                        <Section title="Treasury">
+                            <Treasury/>
+                        </Section>
+                        <Section title="Assets">
+                            <Assets/>
                         </Section>
                     </View>
                 </ScrollView>

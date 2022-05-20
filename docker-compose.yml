@@ -18,3 +18,9 @@ services:
       - ./tx_pool:/exchange/tx_pool
     ports:
       - "3002:3000"
+  treasury:
+    build: ./treasury
+    volumes:
+      - ./treasury:/treasury
+    ports:
+      - "3003:3000"

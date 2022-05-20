@@ -24,7 +24,6 @@ const Balances: React.FC = (): JSX.Element => {
         balancesMiddleWare().then(res => setState({balances: res}));
     }, []);
 
-    console.log(state.balances);
     return (<Text>{state.balances}</Text>);
 }
 
