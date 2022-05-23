@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "metro": "react-native start",
+    "emulator": "emulator -avd Pixel_4_API_32 -wipe-data",
     "android": "react-native run-android",
-    "start": "react-native start",
-    "reboot_emulator": "emulator -avd Pixel_4_API_32 -wipe-data",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },

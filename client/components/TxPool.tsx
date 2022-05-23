@@ -36,12 +36,9 @@ const TxPool: React.FC = (): JSX.Element => {
     const parseTx: ListRenderItem<TxPool> = ({item}) => <Text>{item.id}, {item.amount}</Text>;
     const errorText: JSX.Element = <Text>Unable to fetch transactions</Text>;
 
-    return (<>
-        {state.transactions ?
-                <FlatList data={state.transactions} renderItem={parseTx}/>
-                : errorText}
-    </>);
-
+    return state.transactions ?
+            <FlatList data={state.transactions} renderItem={parseTx}/>
+            : errorText;
 }
 
 export default TxPool;

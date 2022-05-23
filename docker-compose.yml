@@ -24,3 +24,9 @@ services:
       - ./treasury:/treasury
     ports:
       - "3003:3000"
+  quotes:
+    build: ./quotes
+    volumes:
+      - ./quotes:/quotes
+    ports:
+      - "3004:3000"

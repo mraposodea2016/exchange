@@ -1,0 +1,6 @@
+
+> client@0.0.1 android
+> react-native run-android
+
+info Running jetifier to migrate libraries to AndroidX. You can disable it using "--no-jetifier" flag.
+Jetifier found 936 file(s) to forward-jetify. Using 8 workers...

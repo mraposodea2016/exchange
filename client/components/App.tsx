@@ -9,7 +9,7 @@ import TxPool from "./TxPool";
 import Hub from "./Hub";
 import Balances from "./Balances";
 import Treasury from "./Treasury";
-import Assets from "./Assets";
+import Quotes from "./Quotes";
 
 const App = () => {
     const isDarkMode = useColorScheme() === 'dark';
@@ -41,7 +41,7 @@ const App = () => {
                             <Treasury/>
                         </Section>
                         <Section title="Assets">
-                            <Assets/>
+                            <Quotes/>
                         </Section>
                     </View>
                 </ScrollView>

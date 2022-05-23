@@ -6,3 +6,7 @@ down:
 
 prune:
 	docker system prune -a
+
+emulate:
+	cd client
+	npm run metro
