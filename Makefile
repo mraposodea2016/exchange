@@ -8,5 +8,5 @@ prune:
 	docker system prune -a
 
 emulate:
-	cd client
-	npm run metro
+	source background.sh
+	start_client
