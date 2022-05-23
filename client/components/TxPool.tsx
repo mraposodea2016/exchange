@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {FlatList, ListRenderItem, ListRenderItemInfo, Text} from "react-native";
+import {FlatList, ListRenderItem, Text} from "react-native";
 import axios from "axios";
 
 interface TxPool {
@@ -36,9 +36,9 @@ const TxPool: React.FC = (): JSX.Element => {
     const parseTx: ListRenderItem<TxPool> = ({item}) => <Text>{item.id}, {item.amount}</Text>;
     const errorText: JSX.Element = <Text>Unable to fetch transactions</Text>;
 
-    return state.transactions ?
+    return (state.transactions ?
             <FlatList data={state.transactions} renderItem={parseTx}/>
-            : errorText;
+            : errorText);
 }
 
 export default TxPool;

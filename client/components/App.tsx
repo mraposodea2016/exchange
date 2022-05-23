@@ -1,51 +1,29 @@
 import React from 'react';
-import {SafeAreaView, ScrollView, StatusBar, useColorScheme, View,} from 'react-native';
 
-import Section from "./Section";
+import {NavigationContainer} from "@react-navigation/native";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-
-import TxPool from "./TxPool";
-import Hub from "./Hub";
+import HomeScreen from "../navigation/Home";
 import Balances from "./Balances";
-import Treasury from "./Treasury";
+import Hub from "./Hub";
+import TxPool from "./TxPool";
 import Quotes from "./Quotes";
+import Treasury from "./Treasury";
+
+const Stack = createNativeStackNavigator();
 
 const App = () => {
-    const isDarkMode = useColorScheme() === 'dark';
-
-    const backgroundStyle = {
-        backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-    };
-
     return (
-            <SafeAreaView style={backgroundStyle}>
-                <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'}/>
-                <ScrollView
-                        contentInsetAdjustmentBehavior="automatic"
-                        style={backgroundStyle}>
-                    <View
-                            style={{
-                                backgroundColor: isDarkMode ? Colors.black : Colors.white,
-                            }}>
-                        <Section title="Balances">
-                            <Balances/>
-                        </Section>
-                        <Section title="Transaction Pool">
-                            <TxPool/>
-                        </Section>
-                        <Section title="Hub">
-                            <Hub/>
-                        </Section>
-                        <Section title="Treasury">
-                            <Treasury/>
-                        </Section>
-                        <Section title="Assets">
-                            <Quotes/>
-                        </Section>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
+            <NavigationContainer>
+                <Stack.Navigator initialRouteName="Home">
+                    <Stack.Screen name="Home" component={HomeScreen} options={{title: "Overview"}}/>
+                    <Stack.Screen name="Balances" component={Balances}/>
+                    <Stack.Screen name="TxPool" component={TxPool}/>
+                    <Stack.Screen name="Hub" component={Hub}/>
+                    <Stack.Screen name="Treasury" component={Treasury}/>
+                    <Stack.Screen name="Quotes" component={Quotes}/>
+                </Stack.Navigator>
+            </NavigationContainer>
     );
 };
 

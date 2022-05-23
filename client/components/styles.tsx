@@ -17,6 +17,15 @@ const styles = StyleSheet.create({
     highlight: {
         fontWeight: '700',
     },
+    homeScreen: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: 'center',
+    },
+    homeScreenButton: {
+        margin: 10,
+        width: "70%",
+    }
 });
 
 export default styles;
