@@ -30,7 +30,7 @@ interface HomeScreenProps {
 
 const HomeScreen: React.FC<HomeScreenProps> = (props: HomeScreenProps) => {
     const devScreens: Array<string> = ["Balances", "TxPool", "Hub", "Treasury", "Quotes"];
-    const clientScreens: Array<string> = ["Trade"];
+    const clientScreens: Array<string> = ["Trade", "Portfolio"];
 
     return (
             <View style={styles.homeScreen}>
