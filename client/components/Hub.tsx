@@ -1,6 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {Text} from "react-native";
+import React, {useState} from "react";
+import {Button, SafeAreaView, ScrollView, StatusBar, Text, useColorScheme, View} from "react-native";
 import axios from "axios";
+import styles from "../styles/Balances";
+import Section from "./Section";
+import SubScreenNav from "../navigation/ScreenNav";
+import {NavigationProp} from "@react-navigation/native";
 
 const hubMiddleWare = async (): Promise<string | undefined> => {
     try {
@@ -15,16 +19,34 @@ type HubState = {
     hub: string | undefined
 }
 
-const Hub: React.FC = () => {
+interface HubProps {
+    navigation: NavigationProp<any>
+}
+
+const Hub: React.FC<HubProps> = (props: HubProps) => {
     const initialState: HubState = {hub: ""};
     const [state, setState] = useState(initialState);
 
-    useEffect(()=>{
+    const getHubResponse = () => {
         hubMiddleWare().then(res => setState({hub: res}));
-    }, []);
+    }
+
+    const isDarkMode = useColorScheme() === 'dark';
 
     return (
-        <Text>{state.hub}</Text>
+            <SafeAreaView style={styles.screen}>
+                <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'}/>
+                <ScrollView contentInsetAdjustmentBehavior="automatic"
+                            style={styles.results}>
+                    <Section title="">
+                        <Text>{state.hub}</Text>
+                    </Section>
+                </ScrollView>
+                <View style={styles.queryButton}>
+                    <Button title="Get Hub Response" onPress={getHubResponse}/>
+                </View>
+                <SubScreenNav navigation={props.navigation}/>
+            </SafeAreaView>
     );
 }
 

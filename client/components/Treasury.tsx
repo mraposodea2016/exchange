@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {Text} from "react-native";
+import {Button, SafeAreaView, ScrollView, StatusBar, Text, useColorScheme, View} from "react-native";
 import axios from "axios";
+import styles from "../styles/Balances";
+import Section from "./Section";
+import SubScreenNav from "../navigation/ScreenNav";
+import {NavigationProp} from "@react-navigation/native";
 
 const treasuryMiddleWare = async (): Promise<string | undefined> => {
     try {
@@ -12,19 +16,37 @@ const treasuryMiddleWare = async (): Promise<string | undefined> => {
 }
 
 type TreasuryState = {
-    Treasury: string | undefined
+    treasury: string | undefined
 }
 
-const Treasury: React.FC = () => {
-    const initialState: TreasuryState = {Treasury: ""};
+interface TreasuryProps {
+    navigation: NavigationProp<any>
+}
+
+const Treasury: React.FC<TreasuryProps> = (props: TreasuryProps) => {
+    const initialState: TreasuryState = {treasury: ""};
     const [state, setState] = useState(initialState);
 
-    useEffect(()=>{
-        treasuryMiddleWare().then(res => setState({Treasury: res}));
-    }, []);
+    const getTreasuryStatus = () => {
+        treasuryMiddleWare().then(res => setState({treasury: res}));
+    }
+
+    const isDarkMode = useColorScheme() === 'dark';
 
     return (
-        <Text>{state.Treasury}</Text>
+            <SafeAreaView style={styles.screen}>
+                <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'}/>
+                <ScrollView contentInsetAdjustmentBehavior="automatic"
+                            style={styles.results}>
+                    <Section title="">
+                        <Text>{state.treasury}</Text>
+                    </Section>
+                </ScrollView>
+                <View style={styles.queryButton}>
+                    <Button title="Get Treasury Status" onPress={getTreasuryStatus}/>
+                </View>
+                <SubScreenNav navigation={props.navigation}/>
+            </SafeAreaView>
     );
 }
 
