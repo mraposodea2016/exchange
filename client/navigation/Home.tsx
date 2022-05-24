@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Text, View} from "react-native";
 import {NavigationProp} from "@react-navigation/native";
-import styles from "../components/styles";
+import styles from "../styles/Home";
 
 interface HomeScreenProps {
     navigation: NavigationProp<any, any>
@@ -13,10 +13,9 @@ const HomeScreen: React.FC<HomeScreenProps> = (props: HomeScreenProps) => {
             <View style={styles.homeScreen}>
                 {screens.map((screen, idx) => {
                     return (
-                            <View style={styles.homeScreenButton}>
+                            <View style={styles.homeScreenButton} key={idx}>
                                 <Button
                                         title={screen}
-                                        key={idx}
                                         onPress={() =>
                                                 props.navigation.navigate(screen)
                                         }

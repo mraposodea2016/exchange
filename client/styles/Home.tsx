@@ -25,6 +25,9 @@ const styles = StyleSheet.create({
     homeScreenButton: {
         margin: 10,
         width: "70%",
+    },
+    subScreenNavButton: {
+        bottom: "0"
     }
 });
 

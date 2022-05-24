@@ -4,6 +4,7 @@ import axios from "axios";
 import Section from "./Section";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {NavigationProp} from "@react-navigation/native";
+import styles from "../styles/Balances";
 
 const balancesMiddleWare = async (): Promise<string> => {
     try {
@@ -27,30 +28,32 @@ interface BalancesProps {
 const Balances: React.FC<BalancesProps> = (props: BalancesProps): JSX.Element => {
     let [state, setState] = useState({balances: "0"});
 
-    useEffect(() => {
+    const getBalances = () => {
         balancesMiddleWare().then(res => setState({balances: res}));
-    }, []);
+    }
 
     const isDarkMode = useColorScheme() === 'dark';
-    const backgroundStyle = isDarkMode ? Colors.darker : Colors.lighter;
 
     return (
-            <SafeAreaView style={backgroundStyle}>
+            <SafeAreaView style={styles.screen}>
                 <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'}/>
-                <ScrollView
-                        contentInsetAdjustmentBehavior="automatic"
-                        style={backgroundStyle}>
-                    <View
-                            style={{
-                                backgroundColor: isDarkMode ? Colors.black : Colors.white,
-                            }}>
-                        <Section title="Balances">
-                            <Text>{state.balances}</Text>
-                        </Section>
+                <ScrollView contentInsetAdjustmentBehavior="automatic"
+                            style={styles.results}>
+                    <Section title="">
+                        <Text>{state.balances}</Text>
+                    </Section>
+                </ScrollView>
+                <View style={styles.queryButton}>
+                    <Button title="Update balances" onPress={getBalances}/>
+                </View>
+                <View style={styles.subScreenNav}>
+                    <View style={styles.subScreenNavButton}>
                         <Button title="Home" onPress={() => props.navigation.navigate('Home')}/>
+                    </View>
+                    <View style={styles.subScreenNavButton}>
                         <Button title="Back" onPress={() => props.navigation.goBack()}/>
                     </View>
-                </ScrollView>
+                </View>
             </SafeAreaView>
     );
 }
