@@ -1,6 +1,14 @@
-import React, {useEffect, useState} from "react";
-import {FlatList, ListRenderItem, Text} from "react-native";
+import React, {useState} from "react";
+import {Button, FlatList, ListRenderItem, SafeAreaView, Text, View} from "react-native";
+
 import axios from "axios";
+
+import {NavigationProp} from "@react-navigation/native";
+
+import styles from "../styles/TxPool";
+
+import Table from "./Table";
+import SubScreenNav from "../navigation/ScreenNav";
 
 interface TxPool {
     id: number,
@@ -23,22 +31,32 @@ type TxPoolState = {
     transactions: Array<TxPool> | undefined
 }
 
-const TxPool: React.FC = (): JSX.Element => {
+interface TxPoolProps {
+    navigation: NavigationProp<any>
+}
+
+const TxPool: React.FC<TxPoolProps> = (props: TxPoolProps): JSX.Element => {
     const initialState: TxPoolState = {
         transactions: []
     }
     const [state, setState] = useState(initialState);
 
-    useEffect(() => {
+    const getTransactions = () => {
         txPoolMiddleware().then(res => setState({transactions: res}));
-    }, []);
+    };
 
-    const parseTx: ListRenderItem<TxPool> = ({item}) => <Text>{item.id}, {item.amount}</Text>;
-    const errorText: JSX.Element = <Text>Unable to fetch transactions</Text>;
-
-    return (state.transactions ?
-            <FlatList data={state.transactions} renderItem={parseTx}/>
+    const errorText: JSX.Element = <Text style={styles.txError}>Unable to fetch transactions</Text>;
+    const results: JSX.Element = (state.transactions ?
+            <Table data={state.transactions} cols={["id", "amount"]}/>
             : errorText);
+
+    return (<SafeAreaView style={styles.screen}>
+        {results}
+        <View style={styles.txButton}>
+            <Button title="Get Transactions" onPress={getTransactions}/>
+        </View>
+        <SubScreenNav navigation={props.navigation}/>
+    </SafeAreaView>);
 }
 
 export default TxPool;

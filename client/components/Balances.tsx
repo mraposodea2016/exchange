@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Button, SafeAreaView, ScrollView, StatusBar, Text, useColorScheme, View} from "react-native";
 import axios from "axios";
 import Section from "./Section";
-import {Colors} from "react-native/Libraries/NewAppScreen";
 import {NavigationProp} from "@react-navigation/native";
 import styles from "../styles/Balances";
+import SubScreenNav from "../navigation/ScreenNav";
 
 const balancesMiddleWare = async (): Promise<string> => {
     try {
@@ -46,14 +46,7 @@ const Balances: React.FC<BalancesProps> = (props: BalancesProps): JSX.Element =>
                 <View style={styles.queryButton}>
                     <Button title="Update balances" onPress={getBalances}/>
                 </View>
-                <View style={styles.subScreenNav}>
-                    <View style={styles.subScreenNavButton}>
-                        <Button title="Home" onPress={() => props.navigation.navigate('Home')}/>
-                    </View>
-                    <View style={styles.subScreenNavButton}>
-                        <Button title="Back" onPress={() => props.navigation.goBack()}/>
-                    </View>
-                </View>
+                <SubScreenNav navigation={props.navigation}/>
             </SafeAreaView>
     );
 }

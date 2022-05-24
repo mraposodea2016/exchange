@@ -4,15 +4,19 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1,
         flexDirection: "column",
-        alignItems: "center",
+        alignItems: "center"
     },
-    results: {
-        flex: 6
+    txList: {
+        flex: 6,
+        marginTop: 10
     },
-    queryButton: {
+    txError: {
+        flex: 1
+    },
+    txButton: {
         flex: 1,
-        color: "red"
-    },
+        color: "red",
+    }
 });
 
 export default styles;
