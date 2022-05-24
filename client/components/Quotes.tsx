@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Button, FlatList, ListRenderItem, SafeAreaView, Text, View} from "react-native";
+import React, {useState} from "react";
+import {Button, SafeAreaView, Text, View} from "react-native";
 import axios from "axios";
 import styles from "../styles/Quotes";
 import Table from "./Table";

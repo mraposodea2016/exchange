@@ -9,6 +9,7 @@ import Hub from "./Hub";
 import TxPool from "./TxPool";
 import Quotes from "./Quotes";
 import Treasury from "./Treasury";
+import Trade from "./Trade";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,9 @@ const App = () => {
             <NavigationContainer>
                 <Stack.Navigator initialRouteName="Home">
                     <Stack.Screen name="Home" component={HomeScreen} options={{title: "Overview"}}/>
+                    <Stack.Screen name="Trade" component={Trade} />
+
+                    {/*Dev Screens*/}
                     <Stack.Screen name="Balances" component={Balances}/>
                     <Stack.Screen name="TxPool" component={TxPool}/>
                     <Stack.Screen name="Hub" component={Hub}/>
@@ -26,6 +30,5 @@ const App = () => {
             </NavigationContainer>
     );
 };
-
 
 export default App;
