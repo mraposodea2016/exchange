@@ -7,18 +7,16 @@ interface TradeState {
     amount: number
 }
 
-interface TradeProps {
-    onSubmit: (state: TradeState) => void,
-}
-
-
-const Trade: React.FC<TradeProps> = (props: TradeProps) => {
+const Trade: React.FC = () => {
     const [assetName, onChangeAssetName] = React.useState("Asset Name");
     const [side, onChangeSide] = React.useState("Buy");
     const [amount, setAmount] = React.useState(0.0);
     const onChangeAmount = (text: string) => {
         setAmount(Number(text))
     }
+
+    const onSubmit = (state: TradeState) => {
+    };
 
     return (<SafeAreaView>
         <TextInput
@@ -42,7 +40,7 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
                 title="Trade"
                 color="blue"
                 onPress={() => {
-                    props.onSubmit({assetName, side, amount})
+                    onSubmit({assetName, side, amount})
                     onChangeAssetName("Asset Name")
                     onChangeSide("Buy")
                     setAmount(0.0)
