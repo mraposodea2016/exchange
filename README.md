@@ -8,6 +8,11 @@ Status: WIP
 
 **V1**
 - [ ] Trade order placement
+  - [ ] Front page button 
+  - [ ] Trade inputs (asset, amount, buy/sell)
+  - [ ] Execution
+    - [ ] Order added to pool
+    - [ ] Portfolio update
 - [ ] Detailed portfolio view
 
 **V2**
