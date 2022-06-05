@@ -1,21 +1,40 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Button, SafeAreaView, StyleSheet, TextInput} from "react-native";
+import {balancesMiddleWare, BalanceType} from "./Balances";
 
 interface TradeState {
     assetName: string,
     side: string,
-    amount: number
+    amount: number,
+    balances: Array<BalanceType>
 }
 
 const Trade: React.FC = () => {
-    const [assetName, onChangeAssetName] = React.useState("Asset Name");
-    const [side, onChangeSide] = React.useState("Buy");
-    const [amount, setAmount] = React.useState(0.0);
+    const initialState: TradeState = {
+        assetName: "Asset Name (BTC / ETH)",
+        side: "Buy / Sell",
+        amount: 0.0,
+        balances: []
+    }
+
+    const [assetName, onChangeAssetName] = React.useState(initialState.assetName);
+    const [side, onChangeSide] = React.useState(initialState.side);
+    const [amount, setAmount] = React.useState(initialState.amount);
+    const [balances, setBalances] = React.useState(initialState.balances);
     const onChangeAmount = (text: string) => {
         setAmount(Number(text))
     }
 
-    const onSubmit = (state: TradeState) => {
+    useEffect(()=> {
+        balancesMiddleWare().then(res => {
+            typeof res === "string"
+                    ? console.log(`Failed to fetch balances with error: ${res}`)
+                    : setBalances(res)
+        });
+    }, []);
+
+    const submitTrade = (state: TradeState) => {
+        console.log(state);
     };
 
     return (<SafeAreaView>
@@ -40,10 +59,10 @@ const Trade: React.FC = () => {
                 title="Trade"
                 color="blue"
                 onPress={() => {
-                    onSubmit({assetName, side, amount})
-                    onChangeAssetName("Asset Name")
-                    onChangeSide("Buy")
-                    setAmount(0.0)
+                    submitTrade({assetName, side, amount, balances});
+                    onChangeAssetName(initialState.assetName);
+                    onChangeSide(initialState.side);
+                    setAmount(initialState.amount);
                 }}/>
     </SafeAreaView>);
 }

@@ -63,3 +63,4 @@ buck-out/
 package-lock.json
 yarn.lock
 emulator.log
+app.log

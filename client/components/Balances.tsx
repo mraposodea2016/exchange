@@ -6,7 +6,20 @@ import {NavigationProp} from "@react-navigation/native";
 import styles from "../styles/Balances";
 import SubScreenNav from "../navigation/ScreenNav";
 
-const balancesMiddleWare = async (): Promise<string> => {
+interface BalancesProps {
+    navigation: NavigationProp<any>
+}
+
+export type BalanceType = {
+    asset: string
+    amount: number
+}
+
+export interface BalanceState {
+    balances: Array<BalanceType>
+}
+
+export const balancesMiddleWare = async (): Promise<Array<BalanceType> | string> => {
     try {
         const response = await axios.get("http://10.0.2.2:3000/",
                 {
@@ -15,21 +28,23 @@ const balancesMiddleWare = async (): Promise<string> => {
                     }
                 });
         return response.data.balances;
-    } catch (e) {
-        console.log(e);
-        return "Failed to fetch balances";
+    } catch (e: any) {
+        return e.message;
     }
 }
 
-interface BalancesProps {
-    navigation: NavigationProp<any>
-}
-
 const Balances: React.FC<BalancesProps> = (props: BalancesProps): JSX.Element => {
-    let [state, setState] = useState({balances: "0"});
+    const initialBalances: BalanceType = {asset: "BTC", amount: 1};
+    const initialState: BalanceState = {balances: [initialBalances]};
+
+    let [state, setState] = useState(initialState);
 
     const getBalances = () => {
-        balancesMiddleWare().then(res => setState({balances: res}));
+        balancesMiddleWare().then(res => {
+            typeof res === "string"
+            ? console.log(`Failed to fetch balances with error: ${res}`)
+            : setState({balances: res})
+        })
     }
 
     const isDarkMode = useColorScheme() === 'dark';

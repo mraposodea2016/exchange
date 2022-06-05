@@ -8,5 +8,5 @@ prune:
 	docker system prune -a
 
 emulate:
-	source background.sh
+	./background.sh
 	start_client
