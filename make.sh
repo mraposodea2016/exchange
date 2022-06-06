@@ -11,3 +11,8 @@ start_client(){
 	cd ..;
 	return 0;
 }
+
+compose_rebuild() {
+  service=$1;
+  docker-compose up -d --no-deps --build "$service";
+}

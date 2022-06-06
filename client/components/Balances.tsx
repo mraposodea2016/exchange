@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Button, SafeAreaView, ScrollView, StatusBar, Text, useColorScheme, View} from "react-native";
 import axios from "axios";
-import Section from "./Section";
+import Table from "./Table";
 import {NavigationProp} from "@react-navigation/native";
 import styles from "../styles/Balances";
 import SubScreenNav from "../navigation/ScreenNav";
@@ -27,16 +27,14 @@ export const balancesMiddleWare = async (): Promise<Array<BalanceType> | string>
                         'Access-Control-Allow-Origin': true
                     }
                 });
-        return response.data.balances;
+        return response.data;
     } catch (e: any) {
         return e.message;
     }
 }
 
 const Balances: React.FC<BalancesProps> = (props: BalancesProps): JSX.Element => {
-    const initialBalances: BalanceType = {asset: "BTC", amount: 1};
-    const initialState: BalanceState = {balances: [initialBalances]};
-
+    const initialState: BalanceState = {balances: []};
     let [state, setState] = useState(initialState);
 
     const getBalances = () => {
@@ -49,14 +47,17 @@ const Balances: React.FC<BalancesProps> = (props: BalancesProps): JSX.Element =>
 
     const isDarkMode = useColorScheme() === 'dark';
 
+    const errorText: JSX.Element = <Text style={styles.error}>Unable to retrieve balances</Text>;
+    const balances: JSX.Element = (state.balances ?
+        <Table data={state.balances} cols={["asset", "amount"]}/>
+        : errorText);
+
     return (
             <SafeAreaView style={styles.screen}>
                 <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'}/>
                 <ScrollView contentInsetAdjustmentBehavior="automatic"
                             style={styles.results}>
-                    <Section title="">
-                        <Text>{state.balances}</Text>
-                    </Section>
+                    {balances}
                 </ScrollView>
                 <View style={styles.queryButton}>
                     <Button title="Update balances" onPress={getBalances}/>

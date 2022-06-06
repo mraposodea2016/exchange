@@ -9,6 +9,9 @@ const styles = StyleSheet.create({
     results: {
         flex: 6
     },
+    error: {
+        flex: 1
+    },
     queryButton: {
         flex: 1,
         color: "red"
