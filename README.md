@@ -10,17 +10,19 @@ Status: WIP
 - [ ] Trade order placement
   - [X] Front page button 
   - [X] Trade inputs (asset, amount, buy/sell)
-  - [ ] Get user balances
+  - [X] Get user balances
+  - [ ] Get quotes
   - [ ] Execution
     - [ ] If funds available:
       - [ ] Order added to pool
       - [ ] Portfolio update
     - [ ] Else:
       - [ ] Error message
-- [ ] Detailed portfolio view
+- [X] Detailed portfolio view
 - [ ] Use Expo for emulation
 
 **V2**
+- [ ] Implement Redux
 - [ ] Fetch market quotes from external APIs
 - [ ] Company trades buffered to minimize trading costs
 

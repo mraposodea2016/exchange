@@ -1,68 +1,94 @@
 import React, {useEffect} from "react";
 import {Button, SafeAreaView, StyleSheet, TextInput} from "react-native";
 import {balancesMiddleWare, BalanceType} from "./Balances";
+import {QuoteType, quotesMiddleWare} from "./Quotes";
 
 interface TradeState {
-    assetName: string,
+    baseAsset: string,
+    quoteAsset: string,
     side: string,
     amount: number,
-    balances: Array<BalanceType>
+    balances: Array<BalanceType>,
+    quotes: Array<QuoteType>,
 }
 
 const Trade: React.FC = () => {
     const initialState: TradeState = {
-        assetName: "Asset Name (BTC / ETH)",
+        baseAsset: "Base Asset (BTC / ETH)",
+        quoteAsset: "Quote Asset (BTC / ETH)",
         side: "Buy / Sell",
         amount: 0.0,
-        balances: []
+        balances: [],
+        quotes: [],
     }
 
-    const [assetName, onChangeAssetName] = React.useState(initialState.assetName);
+    const [baseAsset, onChangeBaseAsset] = React.useState(initialState.baseAsset);
+    const [quoteAsset, onChangeQuoteAsset] = React.useState(initialState.quoteAsset);
     const [side, onChangeSide] = React.useState(initialState.side);
+
     const [amount, setAmount] = React.useState(initialState.amount);
-    const [balances, setBalances] = React.useState(initialState.balances);
     const onChangeAmount = (text: string) => {
         setAmount(Number(text))
     }
 
-    useEffect(()=> {
+    const [balances, setBalances] = React.useState(initialState.balances);
+    const [quotes, setQuotes] = React.useState(initialState.quotes);
+
+    useEffect(() => {
         balancesMiddleWare().then(res => {
             typeof res === "string"
                     ? console.log(`Failed to fetch balances with error: ${res}`)
                     : setBalances(res)
         });
+
+        quotesMiddleWare().then(res => {
+            typeof res === "string"
+                    ? console.log(`Failed to fetch quotes due to ${res}`)
+                    : setQuotes(res)
+        });
     }, []);
 
+    const textInputs: Array<JSX.Element> = [{state: baseAsset, action: onChangeBaseAsset},
+        {state: quoteAsset, action: onChangeQuoteAsset},
+        {state: side, action: onChangeSide}].map((s, idx) => {
+        return (<TextInput
+                key={idx}
+                style={styles.input}
+                onChangeText={s.action}
+                value={s.state}
+        />);
+    });
+
+    const numericInput: JSX.Element = (<TextInput
+            style={styles.input}
+            onChangeText={onChangeAmount}
+            value={String(amount)}
+            placeholder="Trade amount"
+            keyboardType="numeric"
+    />);
+
+
     const submitTrade = (state: TradeState) => {
+        const baseBalance = state.balances.find((balance) => balance.asset === state.baseAsset);
+
         console.log(state);
     };
 
+    const resetInputFields = (initialState: TradeState) => {
+        onChangeBaseAsset(initialState.baseAsset);
+        onChangeSide(initialState.side);
+        setAmount(initialState.amount);
+    }
+
     return (<SafeAreaView>
-        <TextInput
-                style={styles.input}
-                onChangeText={onChangeAssetName}
-                value={assetName}
-        />
-        <TextInput
-                style={styles.input}
-                onChangeText={onChangeSide}
-                value={side}
-        />
-        <TextInput
-                style={styles.input}
-                onChangeText={onChangeAmount}
-                value={String(amount)}
-                placeholder="Trade amount"
-                keyboardType="numeric"
-        />
+        {textInputs}
+        {numericInput}
         <Button
                 title="Trade"
                 color="blue"
                 onPress={() => {
-                    submitTrade({assetName, side, amount, balances});
-                    onChangeAssetName(initialState.assetName);
-                    onChangeSide(initialState.side);
-                    setAmount(initialState.amount);
+                    submitTrade({baseAsset, quoteAsset, side, amount, balances, quotes});
+                    resetInputFields(initialState);
                 }}/>
     </SafeAreaView>);
 }

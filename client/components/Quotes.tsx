@@ -6,22 +6,22 @@ import Table from "./Table";
 import SubScreenNav from "../navigation/ScreenNav";
 import {NavigationProp} from "@react-navigation/native";
 
-interface Quote {
+export type QuoteType = {
     asset_id: string
     price: number
 }
 
-const quotesMiddleWare = async (): Promise<Array<Quote> | undefined> => {
+export const quotesMiddleWare = async (): Promise<Array<QuoteType> | string> => {
     try {
         const response = await axios.get("http://10.0.2.2:3004");
         return response.data;
-    } catch (e) {
-        console.log(e);
+    } catch (e: any) {
+        return e.message;
     }
 }
 
 type QuotesState = {
-    quotes: Array<Quote> | undefined
+    quotes: Array<QuoteType>
 }
 
 interface QuotesProps {
@@ -33,12 +33,16 @@ const Quotes: React.FC<QuotesProps> = (props: QuotesProps) => {
     const [state, setState] = useState(initialState);
 
     const getQuotes = () => {
-        quotesMiddleWare().then(res => setState({quotes: res}));
+        quotesMiddleWare().then(res => {
+            typeof res === "string"
+            ? console.log(`Failed to fetch quotes due to ${res}`)
+            : setState({quotes: res})
+        });
     }
 
     const errorText: JSX.Element = <Text style={styles.error}>Unable to fetch quotes</Text>;
     const results: JSX.Element = (state.quotes ?
-            <Table data={state.quotes} cols={["asset_id", "price"]}/>
+            <Table data={state.quotes} cols={["quote_asset", "base_asset", "price"]}/>
             : errorText);
 
     return (<SafeAreaView style={styles.screen}>
