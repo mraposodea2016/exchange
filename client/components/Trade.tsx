@@ -69,9 +69,22 @@ const Trade: React.FC = () => {
 
 
     const submitTrade = (state: TradeState) => {
-        const baseBalance = state.balances.find((balance) => balance.asset === state.baseAsset);
-
         console.log(state);
+
+        const base: BalanceType | undefined = state.balances.find((balance) => balance.asset === state.baseAsset);
+        if (!base) { return; }
+        const baseBalance: number = base.amount;
+
+        const pairQuote: QuoteType | undefined = state.quotes.find((quote) =>
+                quote.baseAsset === state.baseAsset
+                && quote.quoteAsset === state.quoteAsset
+        );
+        if (!pairQuote) {return;}
+        const tradeCostInBaseAsset: number = pairQuote.price;
+
+        if (baseBalance < tradeCostInBaseAsset) {return;}
+
+
     };
 
     const resetInputFields = (initialState: TradeState) => {

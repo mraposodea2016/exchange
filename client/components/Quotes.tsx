@@ -7,7 +7,8 @@ import SubScreenNav from "../navigation/ScreenNav";
 import {NavigationProp} from "@react-navigation/native";
 
 export type QuoteType = {
-    asset_id: string
+    baseAsset: string,
+    quoteAsset: string,
     price: number
 }
 
