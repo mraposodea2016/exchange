@@ -5,10 +5,10 @@ import axios from "axios";
 
 import {NavigationProp} from "@react-navigation/native";
 
-import styles from "../styles/TxPool";
+import styles from "./TxPoolStyles";
 
-import Table from "./Table";
-import SubScreenNav from "../navigation/ScreenNav";
+import Table from "../../components/Table";
+import SubScreenNav from "../../navigation/ScreenNav";
 
 interface TxPool {
     id: number,

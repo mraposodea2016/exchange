@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {Button, SafeAreaView, StyleSheet, TextInput} from "react-native";
-import {balancesMiddleWare, BalanceType} from "./Balances";
-import {QuoteType, quotesMiddleWare} from "./Quotes";
+import {balancesThunk, BalanceType} from "../balances/Balances";
+import {QuoteType, quotesThunk} from "../quotes/Quotes";
 import axios from "axios";
 
 const HOST: string = "http://10.0.2.2";
@@ -46,13 +46,13 @@ const Trade: React.FC = () => {
     const [price, setPrice] = React.useState(initialState.price);
 
     useEffect(() => {
-        balancesMiddleWare().then(res => {
+        balancesThunk().then(res => {
             typeof res === "string"
                     ? console.log(`Failed to fetch balances with error: ${res}`)
                     : setBalances(res)
         });
 
-        quotesMiddleWare().then(res => {
+        quotesThunk().then(res => {
             typeof res === "string"
                     ? console.log(`Failed to fetch quotes due to ${res}`)
                     : setQuotes(res)
@@ -133,7 +133,7 @@ const Trade: React.FC = () => {
         }
     }
 
-    const submitTrade = (state: TradeState) => {
+    const submitTrade = (state: TradeState):void => {
         console.log(state);
         if (!fundsAvailable(state)) {
             return;
@@ -143,8 +143,9 @@ const Trade: React.FC = () => {
         });
     };
 
-    const resetInputFields = (initialState: TradeState) => {
+    const resetInputFields = (initialState: TradeState):void => {
         onChangeBaseAsset(initialState.baseAsset);
+        onChangeQuoteAsset(initialState.quoteAsset);
         onChangeSide(initialState.side);
         setAmount(initialState.amount);
     }
@@ -154,7 +155,7 @@ const Trade: React.FC = () => {
             color="blue"
             onPress={() => {
                 submitTrade({customerId, baseAsset, quoteAsset, side, amount, balances, quotes, price});
-                // resetInputFields(initialState);
+                resetInputFields(initialState);
             }}/>);
 
     return (<SafeAreaView>

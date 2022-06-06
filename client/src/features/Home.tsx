@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Text, View} from "react-native";
 import {NavigationProp} from "@react-navigation/native";
-import styles from "../styles/Home";
+import styles from "./HomeStyles";
 
 interface NavButtonProps {
     idx: number,

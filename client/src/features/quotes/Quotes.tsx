@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import {Button, SafeAreaView, Text, View} from "react-native";
 import axios from "axios";
-import styles from "../styles/Quotes";
-import Table from "./Table";
-import SubScreenNav from "../navigation/ScreenNav";
+import styles from "./QuotesStyles";
+import Table from "../../components/Table";
+import SubScreenNav from "../../navigation/ScreenNav";
 import {NavigationProp} from "@react-navigation/native";
 
 export type QuoteType = {
@@ -12,7 +12,7 @@ export type QuoteType = {
     price: number
 }
 
-export const quotesMiddleWare = async (): Promise<Array<QuoteType> | string> => {
+export const quotesThunk = async (): Promise<Array<QuoteType> | string> => {
     try {
         const response = await axios.get("http://10.0.2.2:3004");
         const data = response.data;
@@ -41,7 +41,7 @@ const Quotes: React.FC<QuotesProps> = (props: QuotesProps) => {
     const [state, setState] = useState(initialState);
 
     const getQuotes = () => {
-        quotesMiddleWare().then(res => {
+        quotesThunk().then(res => {
             typeof res === "string"
                     ? console.log(`Failed to fetch quotes due to ${res}`)
                     : setState({quotes: res})

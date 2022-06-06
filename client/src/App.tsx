@@ -3,14 +3,14 @@ import React from 'react';
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 
-import HomeScreen from "../navigation/Home";
-import Balances from "./Balances";
-import Hub from "./Hub";
-import TxPool from "./TxPool";
-import Quotes from "./Quotes";
-import Treasury from "./Treasury";
-import Trade from "./Trade";
-import Portfolio from "./Portfolio";
+import HomeScreen from "./features/Home";
+import Balances from "./features/balances/Balances";
+import Hub from "./features/hub/Hub";
+import TxPool from "./features/tx_pool/TxPool";
+import Quotes from "./features/quotes/Quotes";
+import Treasury from "./features/treasury/Treasury";
+import Trade from "./features/trade/Trade";
+import Portfolio from "./features/portfolio/Portfolio";
 
 const Stack = createNativeStackNavigator();
 

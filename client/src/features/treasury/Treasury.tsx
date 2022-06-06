@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {Button, SafeAreaView, ScrollView, StatusBar, Text, useColorScheme, View} from "react-native";
 import axios from "axios";
-import styles from "../styles/Balances";
-import Section from "./Section";
-import SubScreenNav from "../navigation/ScreenNav";
+import styles from "../balances/BalancesStyles";
+import Section from "../../components/Section";
+import SubScreenNav from "../../navigation/ScreenNav";
 import {NavigationProp} from "@react-navigation/native";
 
 const treasuryMiddleWare = async (): Promise<string | undefined> => {

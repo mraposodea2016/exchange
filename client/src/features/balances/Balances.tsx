@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import {Button, SafeAreaView, ScrollView, StatusBar, Text, useColorScheme, View} from "react-native";
 import axios from "axios";
-import Table from "./Table";
+import Table from "../../components/Table";
 import {NavigationProp} from "@react-navigation/native";
-import styles from "../styles/Balances";
-import SubScreenNav from "../navigation/ScreenNav";
+import styles from "./BalancesStyles";
+import SubScreenNav from "../../navigation/ScreenNav";
 
 interface BalancesProps {
     navigation: NavigationProp<any>
@@ -19,7 +19,7 @@ export interface BalanceState {
     balances: Array<BalanceType>
 }
 
-export const balancesMiddleWare = async (): Promise<Array<BalanceType> | string> => {
+export const balancesThunk = async (): Promise<Array<BalanceType> | string> => {
     try {
         const response = await axios.get("http://10.0.2.2:3000/",
                 {
@@ -38,7 +38,7 @@ const Balances: React.FC<BalancesProps> = (props: BalancesProps): JSX.Element =>
     let [state, setState] = useState(initialState);
 
     const getBalances = () => {
-        balancesMiddleWare().then(res => {
+        balancesThunk().then(res => {
             typeof res === "string"
             ? console.log(`Failed to fetch balances with error: ${res}`)
             : setState({balances: res})

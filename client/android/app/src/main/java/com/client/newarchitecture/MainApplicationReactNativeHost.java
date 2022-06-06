@@ -92,7 +92,7 @@ public class MainApplicationReactNativeHost extends ReactNativeHost {
                 CoreComponentsRegistry.register(componentFactory);
 
                 // Here we register a Components Registry.
-                // The one that is generated with the template contains no components
+                // The one that is generated with the template contains no features
                 // and just provides you the one from React Native core.
                 MainComponentsRegistry.register(componentFactory);
 

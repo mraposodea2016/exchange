@@ -18,10 +18,10 @@ Status: WIP
       - [ ] Portfolio update
     - [ ] Else:
       - [ ] Error message
+- [ ] Implement Redux
 - [X] Detailed portfolio view
 
 **V2**
-- [ ] Implement Redux
 - [ ] Fetch market quotes from external APIs
 - [ ] Company trades buffered to minimize trading costs
 
