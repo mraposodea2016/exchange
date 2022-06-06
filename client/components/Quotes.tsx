@@ -15,7 +15,14 @@ export type QuoteType = {
 export const quotesMiddleWare = async (): Promise<Array<QuoteType> | string> => {
     try {
         const response = await axios.get("http://10.0.2.2:3004");
-        return response.data;
+        const data = response.data;
+        return data.map((quote: any) => {
+            return {
+                baseAsset: quote.base_asset,
+                quoteAsset: quote.quote_asset,
+                price: quote.price
+            }
+        });
     } catch (e: any) {
         return e.message;
     }
@@ -36,8 +43,8 @@ const Quotes: React.FC<QuotesProps> = (props: QuotesProps) => {
     const getQuotes = () => {
         quotesMiddleWare().then(res => {
             typeof res === "string"
-            ? console.log(`Failed to fetch quotes due to ${res}`)
-            : setState({quotes: res})
+                    ? console.log(`Failed to fetch quotes due to ${res}`)
+                    : setState({quotes: res})
         });
     }
 

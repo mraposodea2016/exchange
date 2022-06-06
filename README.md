@@ -11,15 +11,14 @@ Status: WIP
   - [X] Front page button 
   - [X] Trade inputs (asset, amount, buy/sell)
   - [X] Get user balances
-  - [ ] Get quotes
+  - [X] Get quotes
   - [ ] Execution
     - [ ] If funds available:
-      - [ ] Order added to pool
+      - [X] Order added to pool
       - [ ] Portfolio update
     - [ ] Else:
       - [ ] Error message
 - [X] Detailed portfolio view
-- [ ] Use Expo for emulation
 
 **V2**
 - [ ] Implement Redux
