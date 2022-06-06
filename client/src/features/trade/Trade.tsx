@@ -1,8 +1,18 @@
 import React, {useEffect} from "react";
 import {Button, SafeAreaView, StyleSheet, TextInput} from "react-native";
+
+import axios from "axios";
+
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import type {AppDispatch, RootState} from "../../app/store";
+
+import {todoAction} from "./TradeSlice";
+
 import {balancesThunk, BalanceType} from "../balances/Balances";
 import {QuoteType, quotesThunk} from "../quotes/Quotes";
-import axios from "axios";
+
+
 
 const HOST: string = "http://10.0.2.2";
 const TX_POOL_PORT: string = "3002";
@@ -19,7 +29,7 @@ interface TradeState {
     price: number,
 }
 
-const Trade: React.FC = () => {
+const Trade: React.FC = (props) => {
     const initialState: TradeState = {
         customerId: "ID",
         baseAsset: "Base Asset (BTC / ETH)",
@@ -174,4 +184,14 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Trade;
+const mapStateToProps = (state: RootState) => {
+    return state;
+}
+
+const mapDispatchToProps = (dispatch: AppDispatch) => {
+    bindActionCreators({
+        todoAction
+    }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Trade);
