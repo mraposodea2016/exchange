@@ -18,7 +18,11 @@ Status: WIP
       - [ ] Portfolio update
     - [ ] Else:
       - [ ] Error message
-- [ ] Implement Redux
+- [ ] Move state logic to Redux
+  - [X] Store 
+  - [X] Balances
+  - [ ] Quotes
+  - [ ] Trade
 - [X] Detailed portfolio view
 
 **V2**

@@ -1,13 +1,22 @@
-import React, {useState} from "react";
+import React, {useEffect} from "react";
 import {Button, SafeAreaView, ScrollView, StatusBar, Text, useColorScheme, View} from "react-native";
-import axios from "axios";
-import Table from "../../components/Table";
-import {NavigationProp} from "@react-navigation/native";
-import styles from "./BalancesStyles";
-import SubScreenNav from "../../navigation/ScreenNav";
 
-interface BalancesProps {
-    navigation: NavigationProp<any>
+import {connect} from "react-redux";
+
+import SubScreenNav from "../../navigation/ScreenNav";
+import {NavigationProp} from "@react-navigation/native";
+
+import Table from "../../components/Table";
+
+import styles from "./BalancesStyles";
+import {BalanceState, fetchBalances} from "./BalancesSlice";
+import {bindActionCreators} from "redux";
+import {AppDispatch} from "../../app/store";
+
+interface BalanceProps {
+    balances: Array<BalanceType>,
+    navigation: NavigationProp<any>,
+    fetchBalances: typeof fetchBalances
 }
 
 export type BalanceType = {
@@ -15,42 +24,13 @@ export type BalanceType = {
     amount: number
 }
 
-export interface BalanceState {
-    balances: Array<BalanceType>
-}
-
-export const balancesThunk = async (): Promise<Array<BalanceType> | string> => {
-    try {
-        const response = await axios.get("http://10.0.2.2:3000/",
-                {
-                    headers: {
-                        'Access-Control-Allow-Origin': true
-                    }
-                });
-        return response.data;
-    } catch (e: any) {
-        return e.message;
-    }
-}
-
-const Balances: React.FC<BalancesProps> = (props: BalancesProps): JSX.Element => {
-    const initialState: BalanceState = {balances: []};
-    let [state, setState] = useState(initialState);
-
-    const getBalances = () => {
-        balancesThunk().then(res => {
-            typeof res === "string"
-            ? console.log(`Failed to fetch balances with error: ${res}`)
-            : setState({balances: res})
-        })
-    }
-
+const Balances: React.FC<BalanceProps> = (props: BalanceProps): JSX.Element => {
     const isDarkMode = useColorScheme() === 'dark';
 
     const errorText: JSX.Element = <Text style={styles.error}>Unable to retrieve balances</Text>;
-    const balances: JSX.Element = (state.balances ?
-        <Table data={state.balances} cols={["asset", "amount"]}/>
-        : errorText);
+    const balances: JSX.Element = (props.balances ?
+            <Table data={props.balances} cols={["asset", "amount"]}/>
+            : errorText);
 
     return (
             <SafeAreaView style={styles.screen}>
@@ -60,11 +40,22 @@ const Balances: React.FC<BalancesProps> = (props: BalancesProps): JSX.Element =>
                     {balances}
                 </ScrollView>
                 <View style={styles.queryButton}>
-                    <Button title="Update balances" onPress={getBalances}/>
+                    <Button title="Update balances" onPress={props.fetchBalances}/>
                 </View>
                 <SubScreenNav navigation={props.navigation}/>
             </SafeAreaView>
     );
 }
 
-export default Balances;
+const mapStateToProps = (state: BalanceState) => {
+    const {balances} = state;
+    return balances;
+}
+
+const mapDispatchToProps = (dispatch: AppDispatch) => {
+    return bindActionCreators({
+        fetchBalances
+    }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Balances);
