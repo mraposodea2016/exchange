@@ -1,10 +1,25 @@
 import React, {useState} from "react";
 import {Button, SafeAreaView, Text, View} from "react-native";
+
 import axios from "axios";
+
+import {connect} from "react-redux";
+import {QuotesState, fetchQuotes} from "./QuotesSlice";
+
 import styles from "./QuotesStyles";
+
 import Table from "../../components/Table";
+
 import SubScreenNav from "../../navigation/ScreenNav";
 import {NavigationProp} from "@react-navigation/native";
+import {AppDispatch} from "../../app/store";
+import {bindActionCreators} from "redux";
+
+interface QuotesProps {
+    navigation: NavigationProp<any>,
+    quotes: Array<QuoteType>,
+    fetchQuotes: typeof fetchQuotes
+}
 
 export type QuoteType = {
     baseAsset: string,
@@ -12,54 +27,32 @@ export type QuoteType = {
     price: number
 }
 
-export const quotesThunk = async (): Promise<Array<QuoteType> | string> => {
-    try {
-        const response = await axios.get("http://10.0.2.2:3004");
-        const data = response.data;
-        return data.map((quote: any) => {
-            return {
-                baseAsset: quote.base_asset,
-                quoteAsset: quote.quote_asset,
-                price: quote.price
-            }
-        });
-    } catch (e: any) {
-        return e.message;
-    }
-}
-
-type QuotesState = {
-    quotes: Array<QuoteType>
-}
-
-interface QuotesProps {
-    navigation: NavigationProp<any>
-}
-
 const Quotes: React.FC<QuotesProps> = (props: QuotesProps) => {
-    const initialState: QuotesState = {quotes: []};
-    const [state, setState] = useState(initialState);
-
-    const getQuotes = () => {
-        quotesThunk().then(res => {
-            typeof res === "string"
-                    ? console.log(`Failed to fetch quotes due to ${res}`)
-                    : setState({quotes: res})
-        });
-    }
+    console.log(props.quotes);
 
     const errorText: JSX.Element = <Text style={styles.error}>Unable to fetch quotes</Text>;
-    const results: JSX.Element = (state.quotes ?
-            <Table data={state.quotes} cols={["quote_asset", "base_asset", "price"]}/>
+    const results: JSX.Element = (props.quotes ?
+            <Table data={props.quotes} cols={["quoteAsset", "baseAsset", "price"]}/>
             : errorText);
 
     return (<SafeAreaView style={styles.screen}>
         {results}
         <View style={styles.button}>
-            <Button title="Get Quotes" onPress={getQuotes}/>
+            <Button title="Get Quotes" onPress={props.fetchQuotes}/>
         </View>
         <SubScreenNav navigation={props.navigation}/>
     </SafeAreaView>);
 }
 
-export default Quotes;
+const mapStateToProps = (state: QuotesState) => {
+    const { quotes } = state;
+    return quotes;
+}
+
+const mapDispatchToProps = (dispatch: AppDispatch) => {
+    return bindActionCreators({
+        fetchQuotes
+    }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Quotes);

@@ -1,9 +1,11 @@
 import {configureStore} from "@reduxjs/toolkit";
 import BalancesSlice from "../features/balances/BalancesSlice"
+import QuotesSlice from "../features/quotes/QuotesSlice";
 
 export const store = configureStore({
     reducer: {
-        balances: BalancesSlice
+        balances: BalancesSlice,
+        quotes: QuotesSlice,
     }
 });
 

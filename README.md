@@ -21,9 +21,10 @@ Status: WIP
 - [ ] Move state logic to Redux
   - [X] Store 
   - [X] Balances
-  - [ ] Quotes
+  - [X] Quotes
   - [ ] Trade
 - [X] Detailed portfolio view
+- [ ] Improve Table component UI
 
 **V2**
 - [ ] Fetch market quotes from external APIs
