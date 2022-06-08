@@ -1,24 +1,105 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import type {AppDispatch} from "../../app/store";
+import {RootState} from "../../app/store";
+import {BalanceType, selectBalances} from "../balances/Balances";
+import {QuoteType} from "../quotes/Quotes";
+import {FormState, TradeFilter} from "./Trade";
+import {BalanceState, fetchBalances} from "../balances/BalancesSlice";
+import {fetchQuotes, selectQuotes} from "../quotes/QuotesSlice";
+import {useSelector} from "react-redux";
+import axios from "axios";
 
-export const tradeThunk = createAsyncThunk('trade/Thunk', async () => {
-    return "";
-});
+export const fetchTradeData = () => (dispatch: AppDispatch, getState: () => RootState) => {
+    dispatch(fetchBalances());
+    dispatch(fetchQuotes());
+};
 
-const initialState = {
+export interface Transaction {
+    customer_id: string,
+    base_asset: string,
+    quote_asset: string,
+    pair_quote: number,
+    side: string,
+    amount: number
+}
 
+const HOST: string = "http://10.0.2.2";
+const TX_POOL_PORT: string = "3002";
+
+export const postTransactionToPool = createAsyncThunk("trade/postTransactionToPool",
+        async (tx: Transaction): Promise<Transaction> => {
+            const response = await axios.post(`${HOST}:${TX_POOL_PORT}/transactions`, {
+                        transaction: tx
+                    }, {
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    }
+            );
+            return response.data;
+        });
+
+export type TradeState = {
+    customerId: string | undefined,
+    quotedBalance: number | undefined,
+    pairQuote: number | undefined,
+    fundsAvailable: boolean,
+}
+
+const initialState: TradeState = {
+    customerId: undefined,
+    quotedBalance: undefined,
+    pairQuote: undefined,
+    fundsAvailable: false,
 }
 
 const tradeSlice = createSlice({
     name: "trade",
     initialState,
     reducers: {
-        todoAction: (state, action: PayloadAction<any>) => {
-            return state;
+        setQuotedBalance: (state: TradeState, action: PayloadAction<TradeFilter>): void => {
+            const {baseAsset, quoteAsset, balances, quotes} = action.payload;
+            const quotedBalance = balances.find((balance) => {
+                return balance.asset === quoteAsset
+            });
+            if (!quotedBalance) {
+                return;
+            }
+            state.quotedBalance = quotedBalance.amount;
+        },
+        setPairQuote: (state: TradeState, action: PayloadAction<TradeFilter>) => {
+            const {baseAsset, quoteAsset, balances, quotes} = action.payload;
+            const pairQuote = quotes.find((quote) =>
+                    quote.baseAsset === baseAsset
+                    && quote.quoteAsset === quoteAsset
+            );
+            if (!pairQuote) {
+                return;
+            }
+            state.pairQuote = pairQuote.price;
+        },
+        setFundsAvailable: (state: TradeState, action: PayloadAction<FormState>) => {
+            state.fundsAvailable = false;
+            if (state.quotedBalance !== undefined && state.pairQuote !== undefined) {
+                const tradeCostInBaseAsset: number = state.pairQuote * action.payload.amount;
+                state.fundsAvailable = state.quotedBalance >= tradeCostInBaseAsset;
+            }
         }
+    },
+    extraReducers: builder => {
+        builder
+                .addCase(postTransactionToPool.pending, (state: TradeState, action: PayloadAction<any>) => {
+                    console.log("posting transaction");
+                })
+                .addCase(postTransactionToPool.fulfilled, (state: TradeState, action: PayloadAction<Transaction>) => {
+                    console.log(action.payload);
+                })
+                .addCase(postTransactionToPool.rejected, (state: TradeState, action: PayloadAction<any>) => {
+                    console.log("failed to post transaction");
+                })
     }
 });
 
-export const {todoAction} = tradeSlice.actions;
+export const {setQuotedBalance, setPairQuote, setFundsAvailable} = tradeSlice.actions;
 
 export default tradeSlice.reducer;

@@ -18,17 +18,18 @@ Status: WIP
       - [ ] Portfolio update
     - [ ] Else:
       - [ ] Error message
-- [ ] Move state logic to Redux
+- [X] Move state logic to Redux
   - [X] Store 
   - [X] Balances
   - [X] Quotes
-  - [ ] Trade
+  - [X] Trade
 - [X] Detailed portfolio view
 - [ ] Improve Table component UI
 
 **V2**
 - [ ] Fetch market quotes from external APIs
 - [ ] Company trades buffered to minimize trading costs
+- [ ] UI Improvements
 
 **V3**
 - [ ] Cross-service communication handled by event store and streaming platform, e.g. Kafka.

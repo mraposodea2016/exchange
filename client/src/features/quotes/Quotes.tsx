@@ -4,7 +4,7 @@ import {Button, SafeAreaView, Text, View} from "react-native";
 import axios from "axios";
 
 import {connect} from "react-redux";
-import {QuotesState, fetchQuotes} from "./QuotesSlice";
+import {QuoteState, fetchQuotes} from "./QuotesSlice";
 
 import styles from "./QuotesStyles";
 
@@ -44,7 +44,7 @@ const Quotes: React.FC<QuotesProps> = (props: QuotesProps) => {
     </SafeAreaView>);
 }
 
-const mapStateToProps = (state: QuotesState) => {
+const mapStateToProps = (state: QuoteState) => {
     const { quotes } = state;
     return quotes;
 }

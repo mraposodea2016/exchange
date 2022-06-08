@@ -28,11 +28,21 @@ const BalancesSlice = createSlice({
     },
     extraReducers: builder => {
         builder
+                .addCase(fetchBalances.pending,
+                        (state: BalanceState, action: PayloadAction<any>) => {
+                            console.log("fetching balances");
+                        })
                 .addCase(fetchBalances.fulfilled,
                         (state: BalanceState, action: PayloadAction<Array<BalanceType>>) => {
                             state.balances = action.payload;
                         })
+                .addCase(fetchBalances.rejected,
+                        (state: BalanceState, action: PayloadAction<any>) => {
+                            console.log(`Failed to fetch balances due to ${action.payload.message}`);
+                        })
     }
-})
+});
+
+export const {setBalances} = BalancesSlice.actions;
 
 export default BalancesSlice.reducer;

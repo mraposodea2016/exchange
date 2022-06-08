@@ -3,8 +3,9 @@ import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
 
 import {QuoteType} from "./Quotes";
+import {TradeState} from "../trade/TradeSlice";
 
-interface QuotesResponse {
+interface QuoteResponse {
     base_asset: string,
     quote_asset: string,
     price: number
@@ -13,7 +14,7 @@ interface QuotesResponse {
 export const fetchQuotes = createAsyncThunk("quotes/fetchQuotes", async (): Promise<Array<QuoteType>> => {
     const response = await axios.get("http://10.0.2.2:3004");
     const data = response.data;
-    return data.map((quote: QuotesResponse) => {
+    return data.map((quote: QuoteResponse) => {
         return {
             baseAsset: quote.base_asset,
             quoteAsset: quote.quote_asset,
@@ -22,11 +23,11 @@ export const fetchQuotes = createAsyncThunk("quotes/fetchQuotes", async (): Prom
     });
 });
 
-export interface QuotesState {
+export interface QuoteState {
     quotes: Array<QuoteType>
 }
 
-const initialState: QuotesState = {quotes: []};
+const initialState: QuoteState = {quotes: []};
 
 const quotesSlice = createSlice({
     name: "quotes",
@@ -34,13 +35,18 @@ const quotesSlice = createSlice({
     reducers: {},
     extraReducers: builder => {
         builder
-                .addCase(fetchQuotes.fulfilled, (state: QuotesState, action: PayloadAction<Array<QuoteType>>) => {
+                .addCase(fetchQuotes.pending, (state:QuoteState, action: PayloadAction<any>) => {
+                    console.log("fetching quotes");
+                })
+                .addCase(fetchQuotes.fulfilled, (state: QuoteState, action: PayloadAction<Array<QuoteType>>) => {
                     state.quotes = action.payload;
                 })
-                .addCase(fetchQuotes.rejected, (state: QuotesState, action: PayloadAction<any>) => {
+                .addCase(fetchQuotes.rejected, (state: QuoteState, action: PayloadAction<any>) => {
                     console.log(`Failed to fetch quotes due to ${action.payload.message}`);
                 })
     }
 });
+
+export const selectQuotes = (state: QuoteState): Array<QuoteType> => state.quotes;
 
 export default quotesSlice.reducer;

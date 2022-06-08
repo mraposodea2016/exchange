@@ -12,6 +12,7 @@ import styles from "./BalancesStyles";
 import {BalanceState, fetchBalances} from "./BalancesSlice";
 import {bindActionCreators} from "redux";
 import {AppDispatch} from "../../app/store";
+import {TradeState} from "../trade/TradeSlice";
 
 interface BalanceProps {
     balances: Array<BalanceType>,
@@ -57,5 +58,7 @@ const mapDispatchToProps = (dispatch: AppDispatch) => {
         fetchBalances
     }, dispatch);
 }
+
+export const selectBalances = (state: BalanceState): Array<BalanceType> => state.balances;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Balances);

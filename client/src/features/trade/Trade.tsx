@@ -1,73 +1,68 @@
 import React, {useEffect} from "react";
-import {Button, SafeAreaView, StyleSheet, TextInput} from "react-native";
+import {Button, SafeAreaView, TextInput} from "react-native";
 
-import axios from "axios";
-
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {bindActionCreators} from "redux";
-import type {AppDispatch, RootState} from "../../app/store";
+import type {AppDispatch} from "../../app/store";
 
-import {todoAction} from "./TradeSlice";
+import type {TradeState, Transaction} from "./TradeSlice";
+import {fetchTradeData, postTransactionToPool, setFundsAvailable, setPairQuote, setQuotedBalance} from "./TradeSlice";
 
-import {balancesThunk, BalanceType} from "../balances/Balances";
-import {QuoteType, quotesThunk} from "../quotes/Quotes";
+import {BalanceType, selectBalances} from "../balances/Balances";
+import {QuoteType} from "../quotes/Quotes";
 
+import {styles} from "./TradeStyles";
+import {selectQuotes} from "../quotes/QuotesSlice";
 
+export interface TradeFilter {
+    quoteAsset: string,
+    baseAsset: string,
+    balances: Array<BalanceType>,
+    quotes: Array<QuoteType>,
+}
 
-const HOST: string = "http://10.0.2.2";
-const TX_POOL_PORT: string = "3002";
-const CURRENCY_SCALE: number = 10**8;
-
-interface TradeState {
-    customerId: string,
+export interface FormState {
     baseAsset: string,
     quoteAsset: string,
     side: string,
-    amount: number,
-    balances: Array<BalanceType>,
-    quotes: Array<QuoteType>,
-    price: number,
+    amount: number
 }
 
-const Trade: React.FC = (props) => {
-    const initialState: TradeState = {
-        customerId: "ID",
+interface TradeProps {
+    tradeState: TradeState,
+    fetchTradeData: typeof fetchTradeData,
+    postTransactionToPool: typeof postTransactionToPool,
+    setQuotedBalance: typeof setQuotedBalance,
+    setPairQuote: typeof setPairQuote,
+    setFundsAvailable: typeof setFundsAvailable
+}
+
+const Trade: React.FC<TradeProps> = (props: TradeProps) => {
+    const initialFormState: FormState = {
         baseAsset: "Base Asset (BTC / ETH)",
         quoteAsset: "Quote Asset (BTC / ETH)",
         side: "Buy / Sell",
-        amount: 0.0,
-        balances: [],
-        quotes: [],
-        price: 0.0,
+        amount: 0.0
     }
 
-    const [customerId, setCustomerId] = React.useState(initialState.customerId);
-    const [baseAsset, onChangeBaseAsset] = React.useState(initialState.baseAsset);
-    const [quoteAsset, onChangeQuoteAsset] = React.useState(initialState.quoteAsset);
-    const [side, onChangeSide] = React.useState(initialState.side);
-
-    const [amount, setAmount] = React.useState(initialState.amount);
+    const [baseAsset, onChangeBaseAsset] = React.useState(initialFormState.baseAsset);
+    const [quoteAsset, onChangeQuoteAsset] = React.useState(initialFormState.quoteAsset);
+    const [side, onChangeSide] = React.useState(initialFormState.side);
+    const [amount, setAmount] = React.useState(initialFormState.amount);
     const onChangeAmount = (text: string) => {
         setAmount(Number(text))
     }
 
-    const [balances, setBalances] = React.useState(initialState.balances);
-    const [quotes, setQuotes] = React.useState(initialState.quotes);
-    const [price, setPrice] = React.useState(initialState.price);
-
     useEffect(() => {
-        balancesThunk().then(res => {
-            typeof res === "string"
-                    ? console.log(`Failed to fetch balances with error: ${res}`)
-                    : setBalances(res)
-        });
-
-        quotesThunk().then(res => {
-            typeof res === "string"
-                    ? console.log(`Failed to fetch quotes due to ${res}`)
-                    : setQuotes(res)
-        });
+        props.fetchTradeData();
     }, []);
+
+    const tradeFilter: TradeFilter = {
+        quoteAsset: quoteAsset,
+        baseAsset: baseAsset,
+        balances: useSelector(selectBalances),
+        quotes: useSelector(selectQuotes),
+    }
 
     const textInputs: Array<JSX.Element> = [{state: baseAsset, action: onChangeBaseAsset},
         {state: quoteAsset, action: onChangeQuoteAsset},
@@ -88,72 +83,31 @@ const Trade: React.FC = (props) => {
             keyboardType="numeric"
     />);
 
-    const getTradeBalances = (state: TradeState): BalanceType | undefined => {
-        return state.balances.find((balance) => {
-            return balance.asset === state.quoteAsset
-        });
+    const genTransaction = (tradeState: TradeState, formState: FormState, tradeFilter: TradeFilter): Transaction => {
+        if (!tradeState.fundsAvailable || !tradeState.pairQuote || !tradeState.customerId){
+            throw new Error("Invalid trade!");
+        }
+        return {
+            customer_id: tradeState.customerId,
+            base_asset: formState.baseAsset,
+            quote_asset: formState.quoteAsset,
+            pair_quote: tradeState.pairQuote,
+            side: formState.side,
+            amount: formState.amount
+        };
     }
 
-    const getTradeQuote = (state: TradeState): QuoteType | undefined => {
-        return state.quotes.find((quote) =>
-                quote.baseAsset === state.baseAsset
-                && quote.quoteAsset === state.quoteAsset
-        );
-    }
+    const submitTrade = (props: TradeProps, formState: FormState, tradeFilter: TradeFilter): void => {
+        props.setQuotedBalance(tradeFilter);
+        props.setPairQuote(tradeFilter);
+        props.setFundsAvailable(formState);
 
-    const fundsAvailable = (state: TradeState): boolean => {
-        const tradeBalances: BalanceType | undefined = getTradeBalances(state);
-        console.log(tradeBalances);
-        if (!tradeBalances) {
-            return false;
-        }
-        const balance: number = tradeBalances.amount;
-
-        const pairQuote: QuoteType | undefined = getTradeQuote(state);
-        console.log(pairQuote);
-        if (!pairQuote) {
-            return false;
-        }
-        setPrice(pairQuote.price);
-        const tradeCostInBaseAsset: number = state.price * state.amount;
-
-        return balance >= tradeCostInBaseAsset;
-    }
-
-    const postTransactionToPool = async (state: TradeState): Promise<any> => {
-        try {
-            const response = await axios.post(`${HOST}:${TX_POOL_PORT}/transactions`, {
-                        transaction: {
-                            customer_id: state.customerId,
-                            base_asset: state.baseAsset,
-                            quote_asset: state.quoteAsset,
-                            price: state.price,
-                            side: state.side,
-                            amount: state.amount
-                        }
-                    }, {
-                        headers: {
-                            "Content-Type": "application/json"
-                        }
-                    }
-            );
-            return response.data;
-        } catch (e: any) {
-            return e.message;
-        }
-    }
-
-    const submitTrade = (state: TradeState):void => {
-        console.log(state);
-        if (!fundsAvailable(state)) {
-            return;
-        }
-        postTransactionToPool(state).then(res => {
-            console.log(res);
-        });
+        const tradeState = props.tradeState;
+        const tx = genTransaction(tradeState, formState, tradeFilter);
+        props.postTransactionToPool(tx);
     };
 
-    const resetInputFields = (initialState: TradeState):void => {
+    const resetInputFields = (initialState: FormState): void => {
         onChangeBaseAsset(initialState.baseAsset);
         onChangeQuoteAsset(initialState.quoteAsset);
         onChangeSide(initialState.side);
@@ -164,8 +118,8 @@ const Trade: React.FC = (props) => {
             title="Trade"
             color="blue"
             onPress={() => {
-                submitTrade({customerId, baseAsset, quoteAsset, side, amount, balances, quotes, price});
-                resetInputFields(initialState);
+                submitTrade(props, {baseAsset, quoteAsset, side, amount}, tradeFilter);
+                resetInputFields(initialFormState);
             }}/>);
 
     return (<SafeAreaView>
@@ -175,22 +129,17 @@ const Trade: React.FC = (props) => {
     </SafeAreaView>);
 }
 
-const styles = StyleSheet.create({
-    input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-        padding: 10,
-    }
-});
-
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = (state: TradeState): TradeState => {
     return state;
 }
 
 const mapDispatchToProps = (dispatch: AppDispatch) => {
-    bindActionCreators({
-        todoAction
+    return bindActionCreators({
+        fetchTradeData: fetchTradeData,
+        postTransactionToPool: postTransactionToPool,
+        setQuotedBalance: setQuotedBalance,
+        setPairQuote: setPairQuote,
+        setFundsAvailable: setFundsAvailable
     }, dispatch);
 }
 
