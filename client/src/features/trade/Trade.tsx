@@ -8,7 +8,8 @@ import type {AppDispatch} from "../../app/store";
 import type {TradeState, Transaction} from "./TradeSlice";
 import {fetchTradeData, postTransactionToPool, setFundsAvailable, setPairQuote, setQuotedBalance} from "./TradeSlice";
 
-import {BalanceType, selectBalances} from "../balances/Balances";
+import {BalanceType} from "../balances/Balances";
+import {selectBalances} from "../balances/BalancesSlice";
 import {QuoteType} from "../quotes/Quotes";
 
 import {styles} from "./TradeStyles";
@@ -28,15 +29,6 @@ export interface FormState {
     amount: number
 }
 
-interface TradeProps {
-    tradeState: TradeState,
-    fetchTradeData: typeof fetchTradeData,
-    postTransactionToPool: typeof postTransactionToPool,
-    setQuotedBalance: typeof setQuotedBalance,
-    setPairQuote: typeof setPairQuote,
-    setFundsAvailable: typeof setFundsAvailable
-}
-
 const Trade: React.FC<TradeProps> = (props: TradeProps) => {
     const initialFormState: FormState = {
         baseAsset: "Base Asset (BTC / ETH)",
@@ -53,15 +45,25 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
         setAmount(Number(text))
     }
 
+    const resetInputFields = (initialState: FormState): void => {
+        onChangeBaseAsset(initialState.baseAsset);
+        onChangeQuoteAsset(initialState.quoteAsset);
+        onChangeSide(initialState.side);
+        setAmount(initialState.amount);
+    }
+
     useEffect(() => {
         props.fetchTradeData();
     }, []);
 
+    const balances: Array<BalanceType> = useSelector(selectBalances);
+    const quotes: Array<QuoteType> = useSelector(selectQuotes);
+
     const tradeFilter: TradeFilter = {
         quoteAsset: quoteAsset,
         baseAsset: baseAsset,
-        balances: useSelector(selectBalances),
-        quotes: useSelector(selectQuotes),
+        balances: balances,
+        quotes: quotes,
     }
 
     const textInputs: Array<JSX.Element> = [{state: baseAsset, action: onChangeBaseAsset},
@@ -83,8 +85,8 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
             keyboardType="numeric"
     />);
 
-    const genTransaction = (tradeState: TradeState, formState: FormState, tradeFilter: TradeFilter): Transaction => {
-        if (!tradeState.fundsAvailable || !tradeState.pairQuote || !tradeState.customerId){
+    const buildTransactionBody = (tradeState: TradeState, formState: FormState): Transaction => {
+        if (!tradeState.fundsAvailable || !tradeState.pairQuote || !tradeState.customerId) {
             throw new Error("Invalid trade!");
         }
         return {
@@ -103,16 +105,9 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
         props.setFundsAvailable(formState);
 
         const tradeState = props.tradeState;
-        const tx = genTransaction(tradeState, formState, tradeFilter);
+        const tx = buildTransactionBody(tradeState, formState);
         props.postTransactionToPool(tx);
     };
-
-    const resetInputFields = (initialState: FormState): void => {
-        onChangeBaseAsset(initialState.baseAsset);
-        onChangeQuoteAsset(initialState.quoteAsset);
-        onChangeSide(initialState.side);
-        setAmount(initialState.amount);
-    }
 
     const submitButton: JSX.Element = (<Button
             title="Trade"
@@ -129,8 +124,19 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
     </SafeAreaView>);
 }
 
-const mapStateToProps = (state: TradeState): TradeState => {
-    return state;
+interface TradeProps {
+    tradeState: TradeState,
+    fetchTradeData: typeof fetchTradeData,
+    postTransactionToPool: typeof postTransactionToPool,
+    setQuotedBalance: typeof setQuotedBalance,
+    setPairQuote: typeof setPairQuote,
+    setFundsAvailable: typeof setFundsAvailable
+}
+
+const mapStateToProps = (state: TradeState): {tradeState: TradeState} => {
+    return {
+        tradeState: state
+    };
 }
 
 const mapDispatchToProps = (dispatch: AppDispatch) => {

@@ -39,6 +39,7 @@ const quotesSlice = createSlice({
                     console.log("fetching quotes");
                 })
                 .addCase(fetchQuotes.fulfilled, (state: QuoteState, action: PayloadAction<Array<QuoteType>>) => {
+                    console.log("quotes updated");
                     state.quotes = action.payload;
                 })
                 .addCase(fetchQuotes.rejected, (state: QuoteState, action: PayloadAction<any>) => {
@@ -47,6 +48,6 @@ const quotesSlice = createSlice({
     }
 });
 
-export const selectQuotes = (state: QuoteState): Array<QuoteType> => state.quotes;
+export const selectQuotes = (state: {quotes: QuoteState}): Array<QuoteType> => state.quotes.quotes;
 
 export default quotesSlice.reducer;

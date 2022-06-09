@@ -49,8 +49,9 @@ const Balances: React.FC<BalanceProps> = (props: BalanceProps): JSX.Element => {
 }
 
 const mapStateToProps = (state: BalanceState) => {
-    const {balances} = state;
-    return balances;
+    return {
+        balances: state.balances
+    };
 }
 
 const mapDispatchToProps = (dispatch: AppDispatch) => {
@@ -58,7 +59,5 @@ const mapDispatchToProps = (dispatch: AppDispatch) => {
         fetchBalances
     }, dispatch);
 }
-
-export const selectBalances = (state: BalanceState): Array<BalanceType> => state.balances;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Balances);
