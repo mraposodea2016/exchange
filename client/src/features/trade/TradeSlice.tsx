@@ -56,7 +56,6 @@ const tradeSlice = createSlice({
     reducers: {
         setQuoteAssetBalance: (state: TradeState, action: PayloadAction<TradeFilter>): void => {
             const {baseAsset, quoteAsset, balances, quotes} = action.payload;
-            console.log(balances);
             const quoteAssetBalance: BalanceType | undefined = balances.find(balance => balance.asset === quoteAsset);
             if (quoteAssetBalance) {
                 state.baseAssetBalance = quoteAssetBalance.amount;

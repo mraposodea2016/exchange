@@ -88,7 +88,6 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
     />);
 
     const buildTransactionBody = (tradeState: TradeState, formState: FormState): Transaction => {
-        console.log(tradeState);
         if (!tradeState.fundsAvailable || !tradeState.quoteAssetPrice || !tradeState.customerId) {
             throw new Error("Invalid trade!");
         }
@@ -102,19 +101,13 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
     }
 
     const submitTrade = (props: TradeProps, formState: FormState, tradeFilter: TradeFilter): void => {
-        console.log(tradeFilter);
-        console.log(formState);
-
         props.setQuoteAssetBalance(tradeFilter);
         props.setQuoteAssetPrice(tradeFilter);
         props.setFundsAvailable(formState);
         props.setCustomerId("1");
 
         const tradeState = props.tradeState;
-        console.log(tradeState);
-
         const tx = buildTransactionBody(tradeState, formState);
-        console.log(tx);
         props.postTransactionToPool(tx);
     };
 

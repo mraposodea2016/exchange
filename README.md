@@ -16,14 +16,15 @@ Status: WIP
     - [ ] If funds available:
       - [X] Order added to pool
       - [ ] Portfolio update
-    - [ ] Else:
-      - [ ] Error message
+    - [X] Else:
+      - [X] Error message
 - [X] Move state logic to Redux
   - [X] Store 
   - [X] Balances
   - [X] Quotes
   - [X] Trade
-- [X] Detailed portfolio view
+- [ ] Detailed portfolio view
+- [ ] Add page to select trade pair
 - [ ] Improve Table component UI
 
 **V2**
