@@ -3,10 +3,17 @@ import {Button, SafeAreaView, TextInput} from "react-native";
 
 import {connect, useSelector} from "react-redux";
 import {bindActionCreators} from "redux";
-import type {AppDispatch} from "../../app/store";
+import type {AppDispatch, RootState} from "../../app/store";
 
 import type {TradeState, Transaction} from "./TradeSlice";
-import {fetchTradeData, postTransactionToPool, setFundsAvailable, setPairQuote, setQuotedBalance} from "./TradeSlice";
+import {
+    fetchTradeData,
+    postTransactionToPool,
+    setFundsAvailable,
+    setQuoteAssetPrice,
+    setQuoteAssetBalance,
+    setCustomerId
+} from "./TradeSlice";
 
 import {BalanceType} from "../balances/Balances";
 import {selectBalances} from "../balances/BalancesSlice";
@@ -25,21 +32,18 @@ export interface TradeFilter {
 export interface FormState {
     baseAsset: string,
     quoteAsset: string,
-    side: string,
     amount: number
 }
 
 const Trade: React.FC<TradeProps> = (props: TradeProps) => {
     const initialFormState: FormState = {
-        baseAsset: "Base Asset (BTC / ETH)",
-        quoteAsset: "Quote Asset (BTC / ETH)",
-        side: "Buy / Sell",
-        amount: 0.0
+        baseAsset: "ETH",
+        quoteAsset: "BTC",
+        amount: 1.0
     }
 
     const [baseAsset, onChangeBaseAsset] = React.useState(initialFormState.baseAsset);
     const [quoteAsset, onChangeQuoteAsset] = React.useState(initialFormState.quoteAsset);
-    const [side, onChangeSide] = React.useState(initialFormState.side);
     const [amount, setAmount] = React.useState(initialFormState.amount);
     const onChangeAmount = (text: string) => {
         setAmount(Number(text))
@@ -48,7 +52,6 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
     const resetInputFields = (initialState: FormState): void => {
         onChangeBaseAsset(initialState.baseAsset);
         onChangeQuoteAsset(initialState.quoteAsset);
-        onChangeSide(initialState.side);
         setAmount(initialState.amount);
     }
 
@@ -67,8 +70,7 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
     }
 
     const textInputs: Array<JSX.Element> = [{state: baseAsset, action: onChangeBaseAsset},
-        {state: quoteAsset, action: onChangeQuoteAsset},
-        {state: side, action: onChangeSide}].map((s, idx) => {
+        {state: quoteAsset, action: onChangeQuoteAsset}].map((s, idx) => {
         return (<TextInput
                 key={idx}
                 style={styles.input}
@@ -86,26 +88,33 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
     />);
 
     const buildTransactionBody = (tradeState: TradeState, formState: FormState): Transaction => {
-        if (!tradeState.fundsAvailable || !tradeState.pairQuote || !tradeState.customerId) {
+        console.log(tradeState);
+        if (!tradeState.fundsAvailable || !tradeState.quoteAssetPrice || !tradeState.customerId) {
             throw new Error("Invalid trade!");
         }
         return {
             customer_id: tradeState.customerId,
             base_asset: formState.baseAsset,
             quote_asset: formState.quoteAsset,
-            pair_quote: tradeState.pairQuote,
-            side: formState.side,
+            quote_asset_price: tradeState.quoteAssetPrice,
             amount: formState.amount
         };
     }
 
     const submitTrade = (props: TradeProps, formState: FormState, tradeFilter: TradeFilter): void => {
-        props.setQuotedBalance(tradeFilter);
-        props.setPairQuote(tradeFilter);
+        console.log(tradeFilter);
+        console.log(formState);
+
+        props.setQuoteAssetBalance(tradeFilter);
+        props.setQuoteAssetPrice(tradeFilter);
         props.setFundsAvailable(formState);
+        props.setCustomerId("1");
 
         const tradeState = props.tradeState;
+        console.log(tradeState);
+
         const tx = buildTransactionBody(tradeState, formState);
+        console.log(tx);
         props.postTransactionToPool(tx);
     };
 
@@ -113,7 +122,7 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
             title="Trade"
             color="blue"
             onPress={() => {
-                submitTrade(props, {baseAsset, quoteAsset, side, amount}, tradeFilter);
+                submitTrade(props, {baseAsset, quoteAsset, amount}, tradeFilter);
                 resetInputFields(initialFormState);
             }}/>);
 
@@ -127,25 +136,27 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
 interface TradeProps {
     tradeState: TradeState,
     fetchTradeData: typeof fetchTradeData,
+    setQuoteAssetBalance: typeof setQuoteAssetBalance,
+    setQuoteAssetPrice: typeof setQuoteAssetPrice,
+    setFundsAvailable: typeof setFundsAvailable,
+    setCustomerId: typeof setCustomerId,
     postTransactionToPool: typeof postTransactionToPool,
-    setQuotedBalance: typeof setQuotedBalance,
-    setPairQuote: typeof setPairQuote,
-    setFundsAvailable: typeof setFundsAvailable
 }
 
-const mapStateToProps = (state: TradeState): {tradeState: TradeState} => {
+const mapStateToProps = (state: RootState): {tradeState: TradeState} => {
     return {
-        tradeState: state
+        tradeState: state.trade
     };
 }
 
 const mapDispatchToProps = (dispatch: AppDispatch) => {
     return bindActionCreators({
         fetchTradeData: fetchTradeData,
+        setQuoteAssetBalance: setQuoteAssetBalance,
+        setQuoteAssetPrice: setQuoteAssetPrice,
+        setFundsAvailable: setFundsAvailable,
+        setCustomerId: setCustomerId,
         postTransactionToPool: postTransactionToPool,
-        setQuotedBalance: setQuotedBalance,
-        setPairQuote: setPairQuote,
-        setFundsAvailable: setFundsAvailable
     }, dispatch);
 }
 

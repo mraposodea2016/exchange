@@ -12,14 +12,8 @@ import Table from "../../components/Table";
 
 import SubScreenNav from "../../navigation/ScreenNav";
 import {NavigationProp} from "@react-navigation/native";
-import {AppDispatch} from "../../app/store";
+import {AppDispatch, RootState} from "../../app/store";
 import {bindActionCreators} from "redux";
-
-interface QuotesProps {
-    navigation: NavigationProp<any>,
-    quotes: Array<QuoteType>,
-    fetchQuotes: typeof fetchQuotes
-}
 
 export type QuoteType = {
     baseAsset: string,
@@ -44,9 +38,16 @@ const Quotes: React.FC<QuotesProps> = (props: QuotesProps) => {
     </SafeAreaView>);
 }
 
-const mapStateToProps = (state: QuoteState) => {
-    const { quotes } = state;
-    return quotes;
+interface QuotesProps {
+    quotes: Array<QuoteType>,
+    navigation: NavigationProp<any>,
+    fetchQuotes: typeof fetchQuotes
+}
+
+const mapStateToProps = (state: RootState) => {
+    return {
+        quotes: state.quotes.quotes
+    };
 }
 
 const mapDispatchToProps = (dispatch: AppDispatch) => {

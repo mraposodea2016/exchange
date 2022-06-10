@@ -23,7 +23,7 @@ class TransactionsController < ApplicationController
   private
 
   def transaction_params
-    params.require(:transaction).permit(:customer_id, :base_asset, :quote_asset, :price, :side, :amount)
+    params.require(:transaction).permit(:customer_id, :base_asset, :quote_asset, :quote_asset_price, :amount)
   end
 
 end

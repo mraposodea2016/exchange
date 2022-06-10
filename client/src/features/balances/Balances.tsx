@@ -11,14 +11,9 @@ import Table from "../../components/Table";
 import styles from "./BalancesStyles";
 import {BalanceState, fetchBalances} from "./BalancesSlice";
 import {bindActionCreators} from "redux";
-import {AppDispatch} from "../../app/store";
+import {AppDispatch, RootState} from "../../app/store";
 import {TradeState} from "../trade/TradeSlice";
 
-interface BalanceProps {
-    balances: Array<BalanceType>,
-    navigation: NavigationProp<any>,
-    fetchBalances: typeof fetchBalances
-}
 
 export type BalanceType = {
     asset: string
@@ -48,9 +43,15 @@ const Balances: React.FC<BalanceProps> = (props: BalanceProps): JSX.Element => {
     );
 }
 
-const mapStateToProps = (state: BalanceState) => {
+interface BalanceProps {
+    balances: Array<BalanceType>,
+    navigation: NavigationProp<any>,
+    fetchBalances: typeof fetchBalances
+}
+
+const mapStateToProps = (state: RootState) => {
     return {
-        balances: state.balances
+        balances: state.balances.balances
     };
 }
 

@@ -16,8 +16,7 @@ export interface Transaction {
     customer_id: string,
     base_asset: string,
     quote_asset: string,
-    pair_quote: number,
-    side: string,
+    quote_asset_price: number,
     amount: number
 }
 
@@ -39,15 +38,15 @@ export const postTransactionToPool = createAsyncThunk("trade/postTransactionToPo
 
 export type TradeState = {
     customerId: string | undefined,
-    quotedBalance: number | undefined,
-    pairQuote: number | undefined,
+    baseAssetBalance: number | undefined,
+    quoteAssetPrice: number | undefined,
     fundsAvailable: boolean,
 }
 
 const initialState: TradeState = {
     customerId: undefined,
-    quotedBalance: undefined,
-    pairQuote: undefined,
+    baseAssetBalance: undefined,
+    quoteAssetPrice: undefined,
     fundsAvailable: false,
 }
 
@@ -55,30 +54,33 @@ const tradeSlice = createSlice({
     name: "trade",
     initialState,
     reducers: {
-        setQuotedBalance: (state: TradeState, action: PayloadAction<TradeFilter>): void => {
+        setQuoteAssetBalance: (state: TradeState, action: PayloadAction<TradeFilter>): void => {
             const {baseAsset, quoteAsset, balances, quotes} = action.payload;
             console.log(balances);
-            const quotedBalance: BalanceType | undefined = balances.find(balance => balance.asset === quoteAsset);
-            if (quotedBalance) {
-                state.quotedBalance = quotedBalance.amount;
+            const quoteAssetBalance: BalanceType | undefined = balances.find(balance => balance.asset === quoteAsset);
+            if (quoteAssetBalance) {
+                state.baseAssetBalance = quoteAssetBalance.amount;
             }
         },
-        setPairQuote: (state: TradeState, action: PayloadAction<TradeFilter>) => {
+        setQuoteAssetPrice: (state: TradeState, action: PayloadAction<TradeFilter>) => {
             const {baseAsset, quoteAsset, balances, quotes} = action.payload;
             const pairQuote = quotes.find((quote) =>
                     quote.baseAsset === baseAsset
                     && quote.quoteAsset === quoteAsset
             );
             if (pairQuote) {
-                state.pairQuote = pairQuote.price;
+                state.quoteAssetPrice = pairQuote.price;
             }
         },
         setFundsAvailable: (state: TradeState, action: PayloadAction<FormState>) => {
             state.fundsAvailable = false;
-            if (state.quotedBalance !== undefined && state.pairQuote !== undefined) {
-                const tradeCostInBaseAsset: number = state.pairQuote * action.payload.amount;
-                state.fundsAvailable = state.quotedBalance >= tradeCostInBaseAsset;
+            if (state.baseAssetBalance !== undefined && state.quoteAssetPrice !== undefined) {
+                const tradeCostInBaseAsset: number = state.quoteAssetPrice * action.payload.amount;
+                state.fundsAvailable = state.baseAssetBalance >= tradeCostInBaseAsset;
             }
+        },
+        setCustomerId: (state: TradeState, action: PayloadAction<string>) => {
+            state.customerId = action.payload;
         }
     },
     extraReducers: builder => {
@@ -96,6 +98,6 @@ const tradeSlice = createSlice({
     }
 });
 
-export const {setQuotedBalance, setPairQuote, setFundsAvailable} = tradeSlice.actions;
+export const {setQuoteAssetBalance, setQuoteAssetPrice, setFundsAvailable, setCustomerId} = tradeSlice.actions;
 
 export default tradeSlice.reducer;

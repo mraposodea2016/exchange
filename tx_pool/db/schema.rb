@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_06_173142) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_10_194100) do
   create_table "transactions", force: :cascade do |t|
     t.string "customer_id"
     t.integer "amount"
@@ -18,8 +18,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_06_173142) do
     t.datetime "updated_at", null: false
     t.string "base_asset"
     t.string "quote_asset"
-    t.integer "price"
-    t.string "side"
+    t.integer "quote_asset_price"
   end
 
 end
