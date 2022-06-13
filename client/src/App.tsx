@@ -14,6 +14,7 @@ import Treasury from "./features/treasury/Treasury";
 import Trade from "./features/trade/Trade";
 import Portfolio from "./features/portfolio/Portfolio";
 import {Provider} from "react-redux";
+import AssetSelection from "./components/AssetSelection";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,7 @@ const App: React.FC = () => {
                     <Stack.Navigator initialRouteName="Home">
                         <Stack.Screen name="Home" component={HomeScreen} options={{title: "Overview"}}/>
                         <Stack.Screen name="Trade" component={Trade}/>
+                        <Stack.Screen name="AssetSelection" component={AssetSelection}/>
                         <Stack.Screen name="Portfolio" component={Portfolio}/>
 
                         {/*Dev Screens*/}

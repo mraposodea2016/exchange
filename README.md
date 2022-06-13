@@ -28,6 +28,7 @@ Status: WIP
 - [ ] Improve Table component UI
 
 **V2**
+- [ ] Set up databases
 - [ ] Fetch market quotes from external APIs
 - [ ] Company trades buffered to minimize trading costs
 - [ ] UI Improvements

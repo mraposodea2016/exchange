@@ -38,13 +38,17 @@ export const postTransactionToPool = createAsyncThunk("trade/postTransactionToPo
 
 export type TradeState = {
     customerId: string | undefined,
+    baseAsset: string,
+    quoteAsset: string,
     baseAssetBalance: number | undefined,
     quoteAssetPrice: number | undefined,
     fundsAvailable: boolean,
 }
 
-const initialState: TradeState = {
+export const initialState: TradeState = {
     customerId: undefined,
+    baseAsset: "ETH",
+    quoteAsset: "BTC",
     baseAssetBalance: undefined,
     quoteAssetPrice: undefined,
     fundsAvailable: false,
@@ -54,6 +58,12 @@ const tradeSlice = createSlice({
     name: "trade",
     initialState,
     reducers: {
+        setQuoteAsset: (state: TradeState, action: PayloadAction<string>): void => {
+            state.quoteAsset = action.payload;
+        },
+        setBaseAsset: (state: TradeState, action: PayloadAction<string>): void => {
+            state.baseAsset = action.payload;
+        },
         setQuoteAssetBalance: (state: TradeState, action: PayloadAction<TradeFilter>): void => {
             const {baseAsset, quoteAsset, balances, quotes} = action.payload;
             const quoteAssetBalance: BalanceType | undefined = balances.find(balance => balance.asset === quoteAsset);
@@ -97,6 +107,9 @@ const tradeSlice = createSlice({
     }
 });
 
-export const {setQuoteAssetBalance, setQuoteAssetPrice, setFundsAvailable, setCustomerId} = tradeSlice.actions;
+export const {
+    setQuoteAsset, setBaseAsset, setQuoteAssetBalance,
+    setQuoteAssetPrice, setFundsAvailable, setCustomerId
+} = tradeSlice.actions;
 
 export default tradeSlice.reducer;
