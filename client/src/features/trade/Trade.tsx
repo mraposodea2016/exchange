@@ -69,16 +69,11 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
         quotes: quotes,
     }
 
-    const textInputs: Array<JSX.Element> = [{state: baseAsset, action: setBaseAsset},
-        {state: quoteAsset, action: setQuoteAsset}].map((s, idx) => {
-        return (<TextInput
-                key={idx}
+    const textInput: JSX.Element = (<TextInput
                 style={styles.input}
                 onPressIn={() => props.navigation.navigate('AssetSelection')}
-                onChangeText={s.action}
-                value={s.state}
+                value={`${quoteAsset}/${baseAsset}`}
         />);
-    });
 
     const numericInput: JSX.Element = (<TextInput
             style={styles.input}
@@ -121,7 +116,7 @@ const Trade: React.FC<TradeProps> = (props: TradeProps) => {
             }}/>);
 
     return (<SafeAreaView>
-        {textInputs}
+        {textInput}
         {numericInput}
         {submitButton}
     </SafeAreaView>);
@@ -149,6 +144,8 @@ const mapStateToProps = (state: RootState): { tradeState: TradeState } => {
 const mapDispatchToProps = (dispatch: AppDispatch) => {
     return bindActionCreators({
         fetchTradeData: fetchTradeData,
+        setBaseAsset: setBaseAsset,
+        setQuoteAsset: setQuoteAsset,
         setQuoteAssetBalance: setQuoteAssetBalance,
         setQuoteAssetPrice: setQuoteAssetPrice,
         setFundsAvailable: setFundsAvailable,

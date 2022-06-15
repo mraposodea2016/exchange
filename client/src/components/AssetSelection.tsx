@@ -21,31 +21,35 @@ const Item: React.FC<ItemProps> = (props: ItemProps): JSX.Element => {
     );
 }
 
-interface AssetType {
+interface PairType {
     title: string,
     id: string
 }
 
-const AssetSelection: React.FC<AssetSelectionProps> = (props: AssetSelectionProps): JSX.Element => {
-    const assets: Array<AssetType> = [
+const PairSelection: React.FC<PairSelectionProps> = (props: PairSelectionProps): JSX.Element => {
+    const pairs: Array<PairType> = [
         {
-            title: 'BTC',
+            title: 'BTC/ETH',
             id: '1'
         },
         {
-            title: 'ETH',
+            title: 'ETH/BTC',
             id: '2'
         }
     ];
 
-    const setAsset = props.selectionType === 'quoteAsset' ? setQuoteAsset : setBaseAsset;
+    const setPair = (pair: string) => {
+        const [quoteAsset, baseAsset] = pair.split('/');
+        props.setQuoteAsset(quoteAsset);
+        props.setBaseAsset(baseAsset);
+    }
 
     const renderItem = ({item, index, separators}: any) => {
         return (
                 <TouchableHighlight
                         key={item.id}
                         onPress={() => {
-                            setAsset(item.title);
+                            setPair(item.title);
                             props.navigation.goBack();
                         }}
                 >
@@ -56,17 +60,17 @@ const AssetSelection: React.FC<AssetSelectionProps> = (props: AssetSelectionProp
 
     return (<SafeAreaView style={styles.container}>
         <FlatList
-                data={assets}
+                data={pairs}
                 renderItem={renderItem}
-                keyExtractor={(item: AssetType) => item.id}
+                keyExtractor={(item: PairType) => item.id}
         />
     </SafeAreaView>);
 }
 
-interface AssetSelectionProps {
+interface PairSelectionProps {
     selectionType: string,
     setBaseAsset: typeof setBaseAsset,
-    setQuoteAsse: typeof setQuoteAsset,
+    setQuoteAsset: typeof setQuoteAsset,
     navigation: NavigationProp<any>
 }
 
@@ -77,4 +81,4 @@ const mapDispatchToProps = (dispatch: AppDispatch) => {
     }, dispatch);
 }
 
-export default connect(null, mapDispatchToProps)(AssetSelection);
+export default connect(null, mapDispatchToProps)(PairSelection);
