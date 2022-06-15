@@ -12,20 +12,20 @@ Status: WIP
   - [X] Trade inputs (asset, amount, buy/sell)
   - [X] Get user balances
   - [X] Get quotes
-  - [ ] Execution
-    - [ ] If funds available:
-      - [X] Order added to pool
-      - [ ] Portfolio update
-    - [X] Else:
-      - [X] Error message
 - [X] Move state logic to Redux
   - [X] Store 
   - [X] Balances
   - [X] Quotes
   - [X] Trade
+- [X] Pair selection page
 - [ ] Detailed portfolio view
-- [ ] Add page to select trade pair
-- [ ] Improve Table component UI
+- [ ] Execution
+    - [ ] If funds available:
+        - [X] Order added to pool
+        - [ ] Portfolio update
+    - [X] Else:
+        - [X] Error message
+- [ ] Table component UI improvement
 
 **V2**
 - [ ] Set up databases
