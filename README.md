@@ -7,7 +7,7 @@ Status: WIP
 - [X] Simple app pages for each service
 
 **V1**
-- [ ] Trade order placement
+- [X] Trade order placement
   - [X] Front page button 
   - [X] Trade inputs (asset, amount, buy/sell)
   - [X] Get user balances
