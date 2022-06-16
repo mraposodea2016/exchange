@@ -18,7 +18,7 @@ Status: WIP
   - [X] Quotes
   - [X] Trade
 - [X] Pair selection page
-- [ ] Detailed portfolio view
+- [X] Detailed portfolio view
 - [ ] Execution
     - [ ] If funds available:
         - [X] Order added to pool

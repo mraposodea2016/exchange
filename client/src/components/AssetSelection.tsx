@@ -1,11 +1,10 @@
 import React from "react";
-import {View, Text, SafeAreaView, ScrollView, FlatList, ListRenderItem, TouchableHighlight} from "react-native";
+import {FlatList, SafeAreaView, Text, TouchableHighlight, View} from "react-native";
 import styles from "./AssetSelectionStyles";
 import {NavigationProp} from "@react-navigation/native";
 import {setBaseAsset, setQuoteAsset} from "../features/trade/TradeSlice";
-import App from "../App";
 import {AppDispatch} from "../app/store";
-import {connect, createDispatchHook} from "react-redux";
+import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 
 
